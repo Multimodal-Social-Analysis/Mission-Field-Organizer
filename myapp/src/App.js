@@ -44,13 +44,15 @@ const factors = [
 "Segurança",
 "Sexualidade",
 "Socialização", 
+
 /*"Vandalism"*/];
 const recordedFactors = []
 const actualFactors = []
 const dict = {}
 //const count = []
 
-const API_KEY = "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" //Key Goes Here
+const API_KEY = "" //Key Goes Here
+
 
 // const dosomething = () => {
 //   console.log(recordedFactors)
@@ -116,6 +118,7 @@ const handleSendRequest = async (raw, filename) => {
   // +
   var prompt = raw
   prompt +=
+    
   //"\nChoose one of the following factors that best applies to this text (only respond with the answer):"
   "\nEscolha um dos seguintes fatores que melhor se aplica a este texto (responda apenas com a resposta):"
   + "\n["+factors+"]"
