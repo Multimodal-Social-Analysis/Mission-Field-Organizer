@@ -18,19 +18,33 @@ Ideas: Logo
 */
 const zip = new JSZip();
 const factors = [
-"Commerce", 
-"Culture", 
-"Drugs",
-"Education",  
-"Gastronomy", 
-"Infrastructure", 
-"Nature", 
-"Poverty", 
-"Pollution", 
-"Religion", 
-"Security", 
-"Sexuality", 
-"Socialization", 
+// "Commerce", 
+// "Culture", 
+// "Drugs",
+// "Education",  
+// "Gastronomy", 
+// "Infrastructure", 
+// "Nature", 
+// "Poverty", 
+// "Pollution", 
+// "Religion", 
+// "Security", 
+// "Sexuality", 
+// "Socialization",
+"Comércio",
+"Cultura",
+"Drogas",
+"Educação",
+"Gastronomia",
+"Infraestrutura",
+"Natureza",
+"Pobreza",
+"Poluição",
+"Religião",
+"Segurança",
+"Sexualidade",
+"Socialização", 
+
 /*"Vandalism"*/];
 const recordedFactors = []
 const actualFactors = []
@@ -38,6 +52,7 @@ const dict = {}
 //const count = []
 
 const API_KEY = "" //Key Goes Here
+
 
 // const dosomething = () => {
 //   console.log(recordedFactors)
@@ -103,22 +118,27 @@ const handleSendRequest = async (raw, filename) => {
   // +
   var prompt = raw
   prompt +=
-  //"\nChoose one of the following factors that best applies to this text (only respond with the answer): [Social Assistance, City, Commerce, Culture, Drugs, Students, Gastronomy, Infrastructure, Nature, Heritage, Poverty, Pollution, Religion, Security, Sexuality, Socialization, Vandalism]"
-  // //"Choose three of the following factors that best applies to this text (only respond with the answer): [Social Assistance, City, Commerce, Culture, Drugs, Students, Gastronomy, Infrastructure, Nature, Heritage, Poverty, Pollution, Religion, Security, Sexuality, Socialization, Vandalism]"
-  "\nChoose one of the following factors that best applies to this text (only respond with the answer):"
+    
+  //"\nChoose one of the following factors that best applies to this text (only respond with the answer):"
+  "\nEscolha um dos seguintes fatores que melhor se aplica a este texto (responda apenas com a resposta):"
   + "\n["+factors+"]"
-  +"\n“Don’t justify your answers. Don’t give information not mentioned in the CONTEXT INFORMATION.”"
+  +"\n“Don’t justify your answers. Don’t give information not mentioned in the CONTEXT INFORMATION.Do not use punctuation.”"
   //+"\n Use this format: \n [Factor], [Percentage]"
   //"Choose one of the following factors that best represents the social issue in this text (only respond with the answer): [Social Assistance, City, Commerce, Culture, Drugs, Students, Gastronomy, Infrastructure, Nature, Heritage, Poverty, Pollution, Religion, Security, Sexuality, Socialization, Vandalism]"  
   //console.log(prompt)
   var result = ""
   
   try {
-    const response = await processMessageToChatGPT([{ message: prompt, sender: "user" }]);
-    const content = response.choices && response.choices.length 
-    > 0 ? response.choices[0]?.message?.content : null;
-    if (content) {
-      result = content
+    while(result === ""){
+      const response = await processMessageToChatGPT([{ message: prompt, sender: "user" }]);
+      const content = response.choices && response.choices.length 
+      > 0 ? response.choices[0]?.message?.content : null;
+      if (content) {
+        result = content
+        if (!factors.includes(result)){
+          result = ""
+        }
+      }
     }
   } catch (error) {
     console.error("Error processing message:", error);
@@ -148,14 +168,14 @@ const handleSendRequest = async (raw, filename) => {
 
 async function processMessageToChatGPT(chatMessage) {
   const apiMessage = chatMessage.map((messageObject) => {
-    const role = messageObject.sender === "ChatGPT" ? "assistant" : "user";
+    const role = "user"//messageObject.sender === "ChatGPT" ? "assistant" : "user";
     return { role, content: messageObject.message };
   });
 
   const apiRequestBody = {
     "model": "gpt-3.5-turbo",
     "messages": [
-      { role: "system", content: "Don’t justify your answers. Don’t give information not mentioned in the CONTEXT INFORMATION. Do not use punctuation." },
+      { role: "system", content: "Don’t justify your answers. Don’t give information not mentioned in the CONTEXT INFORMATION. Do NOT use punctuation." },
       ...apiMessage,
     ],
   //   { role: "system", content: "You are an AI desgined to find the main topic of a text based ONLY on a given list of factors." 
@@ -202,7 +222,7 @@ const DefineFactors = () => {
         addString += factors[i] + ", " 
       }
 
-  const [text, setText] = useState('Enter Factor...')
+  const [text, setText] = useState('')
   const [showFactors, setShowFactors] = useState(addString)
   
   //console.log(showFactors)
@@ -216,7 +236,7 @@ const DefineFactors = () => {
   const click = () => {
     //console.log(text)
     if (text === "") {
-      alert("Please submit a Factor")
+      alert("Por favor, envie um Fator")
     }
     else{
       factors.push(text)
@@ -235,12 +255,12 @@ const DefineFactors = () => {
   
   return(
     <div>
-      <p className='popup-text'>Current Social Factors:</p>
+      <p className='popup-text'>Fatores Sociais Atuais:</p>
       {/* {check ? <p>{showFactors}</p> : null} */}
       <p onChange={change}>[{showFactors}]</p>
       <div>
-        <input className='popup-textbox' onChange={change} value={text}></input>
-        <button className='Submit-Button' onClick={click}>Submit</button>
+        <input className='popup-textbox' onChange={change} placeholder={"Insira o Fator..."} value={text}></input>
+        <button className='Submit-Button' onClick={click}>Enviar</button>
       </div>
     </div>
   )
@@ -288,12 +308,12 @@ const Dropzone = () => {
           <input {...getInputProps()} />
           {
             <div>
-              <p className="Upload-Button">Upload Data Here</p>
+              <p className="Upload-Button">Carregar Dados Aqui</p>
             </div>
           }
         </div>
       </form>
-      <button className="Test-Button"onClick={DownloadZip}> Download </button>
+      <button className="Test-Button"onClick={DownloadZip}> Baixar Zip </button>
     </div>
   )
 }
@@ -361,12 +381,12 @@ function App() {
         <TravelDetailsView></TravelDetailsView>
         <Dropzone></Dropzone>
         <Popup
-          trigger={<button className="Test-Button"> Define Factors </button>}
+          trigger={<button className="Test-Button"> Definir Fatores </button>}
           position="top center">
             <DefineFactors></DefineFactors>
         </Popup>
         {/* <button onClick={testing}></button> */}
-        <button className={"Test-Button"} onClick={dosomething}>Display Graph</button>
+        <button className={"Test-Button"} onClick={dosomething}>Mostrar Gráfico</button>
       </header>
     </div>
   );
