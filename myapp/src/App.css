@@ -1,20 +1,19 @@
 .App {
   text-align: center;
+  /* z-index: 0; */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
+/* @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
-}
+} */
 
 .App-header {
-  background-color: #282c34;
+  /* background-color: #282c34; */
+  background-color: lightblue;
+  background-color: wheat;
+  /* background-color: black; */
   /* background-color: lightblue; */
   min-height: 100vh;
   display: flex;
@@ -22,11 +21,50 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  /* color: white; */
+  z-index: 0;
+  position: relative;
+  /* z-index: 0; */
 }
 
-.App-link {
-  color: #61dafb;
+.App-header::after{
+  /* z-index: -1; */
+  content: "";
+  pointer-events: none; 
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 516px;
+  background: url('wave2.png');
+  background-size: cover; /* Adjusts the background size */
+  background-position: center; 
+  background-repeat: repeat-x;
+  /* Centers the background image */
+  overflow: hidden; /* Hides overflow content */
+  animation: animate 2s linear infinite;
+  z-index: -1;
+  opacity: 0.4;
+}
+
+@keyframes animate {
+  0%{
+    background-position-x: 0px;
+  }
+  100%{
+    background-position-x: 100vw;
+  }
+}
+
+.Help {
+  background-image: url("question-mark.png");
+  background-color: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  border: none;
 }
 
 .Upload-Button {
@@ -37,17 +75,19 @@
   font-size: 2vh; */
   /* border-radius: 25px; */
   border: 2px solid black;
+  /* background-color: lightgrey; */
+  background-color: white;
   
-
   margin-top: auto;
   margin-bottom: auto;
   font-size: 4vh;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bolder;
   align-content: center;
+  z-index: 0;
 }
 
-/*.Upload-Button:hover,*/.Test-Button:hover {
+.Submit-Button:hover,.Percent-Button:hover,.Test-Button:hover {
   /* background-color: #61dafb; */
   background-color: #d3d3d3;
 }
@@ -69,12 +109,33 @@
 
 .Submit-Button{
   height: 4vh;
-  width: 8vw;
+  width: 7vw;
   font: 100vh;
   font-size: 2vh;
   border-radius: 25px;
+  /* background-color: maroon; */
+  font-weight: bold;
+  /* color: white; */
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
   /* position: relative; */
   /* margin-right: 10px; */
+}
+
+.Percent-Button {
+  /* color: #61dafb; */
+  height: 3vh;
+  width: 30vw;
+  /* font: 50vh; */
+  /* font-size: 1vh; */
+  border-radius: 25px;
+
+  /* margin-top: auto;
+  margin-bottom: auto; */
+  font-size: 2vh;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bolder;
 }
 
 .popup-textbox{
@@ -93,9 +154,40 @@
   font-weight: bolder;
 }
 
+.popup-text-factor {
+  font-size: 2.1vh;
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: italic;
+}
+
+.popup-text-percent {
+  font-size: 3vh;
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: italic;
+}
+
+/* .popup-text-help {
+  font-size: 3vh;
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: italic;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: top right;
+} */
+.popup-text-help {
+  font-size: 3vh;
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: italic;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align text to the right side */
+  justify-content: top right; /* This property doesn't exist, use align-items for horizontal alignment */
+}
+
 .popup-content {
   margin: auto;
-  background: lightgrey;
+  background: #faebca;
   width: 50%;
   padding: 5px;
   border-radius: 20px;
@@ -105,7 +197,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: top center;
-  margin-top: 300px;
+  /* margin-top: 300px; */
 }
 .popup-arrow {
   color: rgb(255, 255, 255);
@@ -132,3 +224,63 @@
     transform: rotate(360deg);
   }
 }
+
+/* .curve {
+  position: absolute;
+  height: 225px;
+  width: 100%;
+  bottom: 0;
+}
+
+.curve::before {
+  content: '';
+  display: block;
+  position: absolute;
+  border-radius: 100% 50%;
+  width: 55%;
+  height: 100%;
+  background-color: black;
+}
+
+.curve::after {
+  content: '';
+  display: block;
+  position: absolute;
+  border-radius: 100% 50%;
+  width: 55%;
+  height: 100%;
+  background-color: blue;
+  transform: translate(-4%, 40%);
+  z-index: -1;
+} 
+
+.wave {
+  /* position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: url('wave.png');
+  background-size: 1000px 100px;
+  overflow: visible;
+
+  animation: animate 5s linear infinite;
+  z-index: 1000;
+  opacity: 0.5;
+  animation-delay: 0s; 
+  
+  pointer-events: none; 
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 516px;
+  background: url('wave2.png');
+  background-size: cover;
+  background-position: center; 
+  overflow: hidden;
+  animation: animate 5s linear infinite;
+  z-index: 0;
+  opacity: 0.5;
+  animation-delay: 0s;
+}*/
