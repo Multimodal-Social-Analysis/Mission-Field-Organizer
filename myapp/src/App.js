@@ -1,6 +1,6 @@
 import './App.css';
 import { useDropzone } from 'react-dropzone'; //npm install --save react-dropzone (on terminal; if necessary)
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { saveAs } from 'file-saver';
 import { Popup } from "reactjs-popup";
 import ReactApexChart from 'react-apexcharts'
@@ -48,9 +48,10 @@ const factors = [
 const recordedFactors = []
 const actualFactors = []
 const dict = {}
+var check = 0;
 //const count = []
 
-const API_KEY = "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" //Key Goes Here
+const API_KEY = "" //Key Goes Here
 
 // const dosomething = () => {
 //   console.log(recordedFactors)
@@ -62,13 +63,13 @@ const API_KEY = "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" //Key Goes
 //     count.push(dict[recordedFactors[i]])
 //   }
 //   // console.log(count)
-//   // TravelDetailsView()
+//   // PieChart()
 //   // return(
-//   //   <TravelDetailsView></TravelDetailsView>
+//   //   <PieChart></PieChart>
 //   // )
 // }
 
-// const TravelDetailsView = () => {
+// const PieChart = () => {
 //   //const theme = useTheme();
 
 //   // const updateChart = (count) => {
@@ -254,7 +255,7 @@ const DefineFactors = () => {
     <div>
       <p className='popup-text'>Fatores Sociais Atuais:</p>
       {/* {check ? <p>{showFactors}</p> : null} */}
-      <p onChange={change}>[{showFactors}]</p>
+      <p className={"popup-text-factor"} onChange={change}>[{showFactors}]</p>
       <div>
         <input className='popup-textbox' onChange={change} placeholder={"Insira o Fator..."} value={text}></input>
         <button className='Submit-Button' onClick={click}>Enviar</button>
@@ -263,6 +264,7 @@ const DefineFactors = () => {
   )
 }
 
+var loading = 0;
 const Dropzone = () => {
   const onDrop = useCallback(acceptedFiles => {    
     // var index = 0
@@ -286,6 +288,8 @@ const Dropzone = () => {
       }
       reader.readAsText(file)
     })
+    loading = 1;
+
   }, [])
 
   //console.log(recordedFactors.length)
@@ -305,6 +309,7 @@ const Dropzone = () => {
           <input {...getInputProps()} />
           {
             <div>
+              {loading === 1 ? <ProgressBar duration={2000}></ProgressBar> : null }
               <p className="Upload-Button">Carregar Dados Aqui</p>
             </div>
           }
@@ -315,19 +320,87 @@ const Dropzone = () => {
   )
 }
 
+const ProgressBar = ({ duration }) => {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setProgress(prevProgress => {
+        if (prevProgress < 100) {
+          return prevProgress + 1;
+        } else {
+          clearInterval(intervalId);
+          return prevProgress;
+        }
+      });
+    }, duration / 100);
+
+    return () => clearInterval(intervalId);
+  }, [duration]);
+
+  return (
+    <div style={{ width: '100%', backgroundColor: '#f0f0f0' }}>
+      <div
+        style={{
+          width: `${progress}%`,
+          height: '20px',
+          backgroundColor: "tan",
+          transition: 'width 0.1s ease-in-out'
+        }}
+      />
+    </div>
+  );
+};
+
 function App() {
   const [chartData, setChartData] = useState({
     series: [],
     labels: [],
-    legend: { labels: { colors: 'white', fontsize: '2vh' } },
+    legend: {show:false},
+    // legend: { labels: { colors: 'black', 
+    //   fontsize: '10vh',
+    //   fontweight: "bold", 
+    //   // floating: true,
+    // } },
+    dataLabels: {
+      enabled: true, // Enable data labels
+      style: {
+          fontSize: '28px',
+          fontFamily: 'Arial',
+          fontWeight: 'bold',
+          colors: ['#000'], // Customize text color
+      },
+      formatter: (val, { seriesIndex }) => {
+          // Return the category name based on the series index
+          return `${chartData.labels[seriesIndex]}`/*${'\r\n'}${val.toFixed(2)}%`*/;
+      },
+      // Configure data label placement and line
+      dropShadow: {
+          enabled: true,
+          blur: 1,
+          onpacity: 0.8,
+      },
+      // Add leader lines pointing to the sections
+      connector: {
+          enabled: true,
+          length: 100,
+          strokeWidth: 5,
+          strokeColor: '#000'
+      },
+      distributed: true,
+      tooltipHoverFormatter: function(seriesName, opts) {
+        // return seriesName + ' - <strong>' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + '</strong>'
+        return seriesName + 'TEST'
+      },
+    },
     colors: [
-      '#ff0000',
-      '#0000ff',
-      '#006400',
-      '#ffff00',
+      '#fa8072',
+      'lightblue',
+      'lightgreen',
+      '#dfc98c',
       '#808080',
-      '#ffffcc',
-      '#ce7e00',
+      '#fcc1cc',
+      '#855134',
       '#abcdef',
       '#e6ccff',
       '#800000',
@@ -339,6 +412,7 @@ function App() {
   const dosomething = () => {
     console.log(recordedFactors)
     console.log(dict)
+    check = 1;
     // console.log(count)
 
     // const newCount = count;
@@ -351,35 +425,131 @@ function App() {
       newCount.push(dict[recordedFactors[i]])
     }
     // console.log(count)
-    // TravelDetailsView()
+    // PieChart()
     // return(
-    //   <TravelDetailsView></TravelDetailsView>
+    //   <PieChart></PieChart>
     // )
     setChartData({
       ...chartData,
       series: newCount,
       labels: recordedFactors,
+      dataLabels: {
+        enabled: true, // Enable data labels
+        style: {
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            fontWeight: 'bold',
+            colors: ['#000'], // Customize text color
+        },
+        formatter: (val, { seriesIndex }) => {
+            // Return the category name based on the series index
+            return `${recordedFactors[seriesIndex]}`/*${'\r\n'}${val.toFixed(2)}%`*/;
+        },
+        // Configure data label placement and line
+        dropShadow: {
+            enabled: true,
+            blur: 1,
+            onpacity: 0.8,
+        },
+        // Add leader lines pointing to the sections
+        connector: {
+            enabled: false,
+            length: 120,
+            strokeWidth: 1,
+            strokeColor: '#000',
+            dashArray: 3
+        },
+        distributed: true,
+        tooltipHoverFormatter: function(seriesName, opts) {
+          // return seriesName + ' - <strong>' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + '</strong>'
+          return seriesName + 'TEST'
+        }
+        // tooltip: {
+        //   enabled: true,
+        //   custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+        //       // Customize the tooltip content
+        //       const category = w.globals.labels[seriesIndex];
+        //       const value = series[seriesIndex];
+        //       const percentage = w.globals.seriesPercent[seriesIndex].toFixed(2);
+        //       return `<div style="padding: 10px; border-radius: 4px; background-color: #f2f2f2;">
+        //           <strong>${category}</strong><br />
+        //           Value: ${value}<br />
+        //           Percentage: ${percentage}%
+        //       </div>`;
+        //   },
+        // },
+      },
     });
   }
 
-  const TravelDetailsView = () => {
+  // const HelpPage = () => {
+  //   return (
+  //     <Popup className='popup-text-help'
+  //     trigger={<button className="Help"></button>}
+  //     style={{margin: 10}}>
+  //       TESTING
+  //       TESTING
+  //       TESTING
+  //       TESTING
+  //     </Popup>
+  //   )
+  // }
+
+  const PercentButton = () => {
+    var totalNum = 0
+    for (var i = 0; i < recordedFactors.length; i++) {
+      totalNum += 
+      dict[recordedFactors[i]]
+    }
+
+    var result = ''
+    for (var i = 0; i < recordedFactors.length; i++) {
+      var percentage = dict[recordedFactors[i]] / totalNum
+      result += 
+      recordedFactors[i] + ": " + `${(percentage * 100).toFixed(2)}%` + "<br>"     
+    }
+
+    return(
+      <div>
+        <p className='popup-text'>Porcentagens:</p>
+        <p className={"popup-text-percent"}>
+        {/* {result} */}
+          <div dangerouslySetInnerHTML={{ __html: result }} />
+        </p>
+        <div>
+        </div>
+      </div>
+    )
+  }
+
+  const PieChart = () => {
     // if (!chartData || !chartData.type) {
     //   return null; // Return null if chartData or chartData.type is undefined
     // }
-    return <ReactApexChart options={chartData} series={chartData.series} type="donut" width="490"  />
+    if (check == 1) {
+      return(
+        <div>
+          <Popup
+          trigger={<button className="Percent-Button">Distribuição Percentual</button>}>
+            <PercentButton></PercentButton>
+          </Popup>
+          {/* <button className="Percent-Button" onClick={percentButton}>Distribuição Percentual</button> */}
+          <ReactApexChart options={chartData} series={chartData.series} type="donut" width="490"  />
+        </div>
+      )
+    }
   }
-
-
-
 
   return (
     <div className="App">
+      {/* <div className="wave"></div> */}
       <header className="App-header">
-        <TravelDetailsView></TravelDetailsView>
+        {/* <HelpPage></HelpPage> */}
+        <PieChart></PieChart>
         <Dropzone></Dropzone>
         <Popup
           trigger={<button className="Test-Button"> Definir Fatores </button>}
-          position="top center">
+          position={['center', 'top center']}>
             <DefineFactors></DefineFactors>
         </Popup>
         {/* <button onClick={testing}></button> */}
