@@ -44,6 +44,7 @@ const factors = [
 "Segurança",
 "Sexualidade",
 "Socialização", 
+
 /*"Vandalism"*/];
 const recordedFactors = []
 const actualFactors = []
@@ -117,6 +118,7 @@ const handleSendRequest = async (raw, filename) => {
   // +
   var prompt = raw
   prompt +=
+    
   //"\nChoose one of the following factors that best applies to this text (only respond with the answer):"
   "\nEscolha um dos seguintes fatores que melhor se aplica a este texto (responda apenas com a resposta):"
   + "\n["+factors+"]"
