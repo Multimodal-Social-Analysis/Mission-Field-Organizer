@@ -1,4 +1,4 @@
-const API_KEY = "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"
+const API_KEY = ""
 
 const handleSendRequest = async () => {
   const prompt = 
