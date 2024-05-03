@@ -3,34 +3,12 @@ import { useDropzone } from 'react-dropzone'; //npm install --save react-dropzon
 import { useCallback, useState, useEffect } from 'react';
 import { saveAs } from 'file-saver';
 import { Popup } from "reactjs-popup";
-import ReactApexChart from 'react-apexcharts'
-import "./reactflow.css"
+import ReactApexChart from 'react-apexcharts';
+import "./reactflow.css";
 var JSZip = require("jszip");
 
-/*
-Ideas: Logo
--Loading Screen????
--Help Page (SUPER MAYBE: potential cute graphic/animation to explain the backend)
--------------------------Upload Button
--------------------------Download Button
--Factors (add a checklist so that we can remove them)
--MindMap Button
-*/
-const zip = new JSZip();
+const zip = new JSZip(); // zip folder that will contain all organized folder files
 const factors = [
-// "Commerce", 
-// "Culture", 
-// "Drugs",
-// "Education",  
-// "Gastronomy", 
-// "Infrastructure", 
-// "Nature", 
-// "Poverty", 
-// "Pollution", 
-// "Religion", 
-// "Security", 
-// "Sexuality", 
-// "Socialization",
 "Comércio",
 "Cultura",
 "Drogas",
@@ -44,98 +22,31 @@ const factors = [
 "Segurança",
 "Sexualidade",
 "Socialização", 
+"Vandalism"]; // Default Factors that the client uses (plus the ones added by the user)
+const recordedFactors = []; // Factors the AI is actually using (if a factor is not assigned to any text files it will not be in this array)
+const dict = {}; // Used to count number of files in a factor (folder)
+var check = 0; // Used to determine whether or not the Pie Chart is displayed
 
-/*"Vandalism"*/];
-const recordedFactors = []
-const actualFactors = []
-const dict = {}
-var check = 0;
-//const count = []
+const API_KEY = "" //API Key for OpenAI Goes Here
 
-const API_KEY = "" //Key Goes Here
-
-// const dosomething = () => {
-//   console.log(recordedFactors)
-//   console.log(dict)
-//   console.log(count)
-
-//   //console.log(recordedFactors.length)
-//   for (let i = 0; i<recordedFactors.length; i++){
-//     count.push(dict[recordedFactors[i]])
-//   }
-//   // console.log(count)
-//   // PieChart()
-//   // return(
-//   //   <PieChart></PieChart>
-//   // )
-// }
-
-// const PieChart = () => {
-//   //const theme = useTheme();
-
-//   // const updateChart = (count) => {
-//   //   chartData.series = count
-//   // }
-//   // const [test, setTest] = useState([])
-
-//   // const updateTest = () =>{
-//   //   setTest(count)
-//   // }
-
-//   const chartData = {
-//     chart: {
-//       type: "donut",
-//       id: "apexchart-example",
-//       // events: {
-//       //   dataPointSelection: function(event, charContext, config) {
-//       //     let selectedLabel=config.w.config.labels[config.dataPointIndex]
-//       //     // console.log(selectedLabel)
-          
-//       //   }
-//       // }
-//     },
-
-//     // series: [1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7],
-//     // labels: factors,
-//     series: count,
-//     labels: recordedFactors,
-//     legend: {
-//       labels:{colors: "white", fontsize:"2vh"}, 
-//     },
-//     colors: ["#ff0000", "#0000ff", "#006400", "#ffff00", "#808080", "#ffffcc", "#ce7e00", "#abcdef", "#e6ccff", "#800000", "#ffd700", "#38761d"],
-//     // series: count,
-//     // labels: recordedFactors,
-//   };
-
-//   return <ReactApexChart options={chartData} series={chartData.series} type="donut" width="490"/>;
-// };
-
-
+// Handles request to OpenAI
 const handleSendRequest = async (raw, filename) => {
-  // const prompt = 
-  // //"Substance abvuse is bad"
-  // "The ethical aspect goes beyond due and rights, to self-giving love. Why is this good? With mere juridical functioning, each misdeed evokes an equal punishment as retribution, giving a zero sum, whereas the ethical aspect can bring extra good into the world that was not there before, and can temper justice with mercy. The ethical aspect makes attitude (self-giving generosity, openness and sacrifice v. self-serving meanness, competitiveness, self-protection) important -- both within individuals and pervading society. It is the ethical aspect that enables trust in society. The pistic / faith aspect offers the possibility of commitment to something higher, something ultimate -- motivation, courage and perseverance. The ethical aspect seems to have a paradox, in which, by tending to give way to the other, it does not enforce its norm, and hence cannot motivate. The pistic aspect motivates, and in harmony 228 with the ethical aspect will motivate to self-giving and the bringing of extra good. In harmony with all aspects, the result is what the Hebrew language calls shalom and the Arabic, salaam. In one word,"
-  // +
-  var prompt = raw
+  var prompt = raw //contains prompt (added below) and the given text
   prompt +=
-    
-  //"\nChoose one of the following factors that best applies to this text (only respond with the answer):"
   "\nEscolha um dos seguintes fatores que melhor se aplica a este texto (responda apenas com a resposta):"
   + "\n["+factors+"]"
   +"\n“Don’t justify your answers. Don’t give information not mentioned in the CONTEXT INFORMATION.Do not use punctuation.”"
-  //+"\n Use this format: \n [Factor], [Percentage]"
-  //"Choose one of the following factors that best represents the social issue in this text (only respond with the answer): [Social Assistance, City, Commerce, Culture, Drugs, Students, Gastronomy, Infrastructure, Nature, Heritage, Poverty, Pollution, Religion, Security, Sexuality, Socialization, Vandalism]"  
-  //console.log(prompt)
-  var result = ""
+
+  var result = "" //used to contain the result
   
   try {
     while(result === ""){
       const response = await processMessageToChatGPT([{ message: prompt, sender: "user" }]);
       const content = response.choices && response.choices.length 
       > 0 ? response.choices[0]?.message?.content : null;
-      if (content) {
+      if (content) { //Checks if the result is one of the factors
         result = content
-        if (!factors.includes(result)){
+        if (!factors.includes(result)){ // if the result is not one of the given factors it tries again
           result = ""
         }
       }
@@ -146,8 +57,8 @@ const handleSendRequest = async (raw, filename) => {
     console.log(prompt)
     console.log(result)
 
+    // Counts the number of times a factor shows up
     var passedTest = true;
-    //var count = 0;
     for (let i = 0; i<recordedFactors.length;i++){
       if (recordedFactors[i] === result){
         passedTest = false
@@ -155,20 +66,17 @@ const handleSendRequest = async (raw, filename) => {
       }
     }
     if (passedTest === true){
-      recordedFactors.push(result)
+      recordedFactors.push(result) // Adds factor that is actually being used
       dict[result] = 1
     }
-    actualFactors.push(result)
-    zip.folder(result).file(filename, raw)
-
-    //Record Result
-    
+    zip.folder(result).file(filename, raw) // Adds file to its folder (based on factor)
   }
 };
 
+// Function that handles processing message to ChatGPT
 async function processMessageToChatGPT(chatMessage) {
   const apiMessage = chatMessage.map((messageObject) => {
-    const role = "user"//messageObject.sender === "ChatGPT" ? "assistant" : "user";
+    const role = "user"
     return { role, content: messageObject.message };
   });
 
@@ -178,11 +86,6 @@ async function processMessageToChatGPT(chatMessage) {
       { role: "system", content: "Don’t justify your answers. Don’t give information not mentioned in the CONTEXT INFORMATION. Do NOT use punctuation." },
       ...apiMessage,
     ],
-  //   { role: "system", content: "You are an AI desgined to find the main topic of a text based ONLY on a given list of factors." 
-  //   +"Don’t justify your answers. You will ONLY respond with one of the following answers:" 
-  //   +factors
-  // },
-    //"max_tokens": 4
   };
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -197,6 +100,7 @@ async function processMessageToChatGPT(chatMessage) {
   return response.json();
 }
 
+// Used to download zip file
 function DownloadZip(){ 
   // Returning number of files (including folders) in zip
   var count = 0
@@ -206,16 +110,15 @@ function DownloadZip(){
 
   if (count === 0){
     console.log("No items in zip file!")
-    //Change to alert maybe
   }
   else {
-    // console.log(count)
     zip.generateAsync({type:"blob"}).then(function(content) {
       saveAs(content, "example.zip")
     })
   }
 }
 
+// Used to define/update the factors provided by the user
 const DefineFactors = () => {
   var addString = ''
       for (var i = 0; i < factors.length; i++) {
@@ -224,39 +127,30 @@ const DefineFactors = () => {
 
   const [text, setText] = useState('')
   const [showFactors, setShowFactors] = useState(addString)
-  
-  //console.log(showFactors)
 
   const change = (event) => {
     setText(event.target.value)
-    // console.log(text)
-    //setShowFactors(factors)
   }
 
+  //adds new Factor
   const click = () => {
-    //console.log(text)
     if (text === "") {
       alert("Por favor, envie um Fator")
     }
     else{
       factors.push(text)
-      // setShowFactors([...factors])
       var addString = ''
       for (var i = 0; i < factors.length; i++) {
         addString += factors[i] + ", " 
       }
       setShowFactors([...addString])
       setText('')
-      // console.log(factors)
-      // change(event)
-      // console.log(factors)
     }
   }
   
   return(
     <div>
       <p className='popup-text'>Fatores Sociais Atuais:</p>
-      {/* {check ? <p>{showFactors}</p> : null} */}
       <p className={"popup-text-factor"} onChange={change}>[{showFactors}]</p>
       <div>
         <input className='popup-textbox' onChange={change} placeholder={"Insira o Fator..."} value={text}></input>
@@ -266,42 +160,24 @@ const DefineFactors = () => {
   )
 }
 
-var loading = 0;
+var loading = 0; // used to handle progress bar
+// Used to handle adding folder with text files
 const Dropzone = () => {
   const onDrop = useCallback(acceptedFiles => {    
-    // var index = 0
     acceptedFiles.forEach((file) => {
       const reader = new FileReader()
 
       reader.onabort = () => console.log('file reading was aborted')
       reader.onerror = () => console.log('file reading has failed')
       reader.onload = () => {
-      // File contents edited here
         const str = reader.result
-
-        handleSendRequest(str, file.name)
-
-        //AI STUFF GOES HERE
-
-        // zip.folder(actualFactors[index]).file(file.name,str)
-        // index++;
-        // zip.folder("NAMEHERE")
-        // zip.file(file.name, str)
+        handleSendRequest(str, file.name) // sends file contents to AI
       }
       reader.readAsText(file)
     })
     loading = 1;
-
   }, [])
 
-  //console.log(recordedFactors.length)
-  // for (let key in dict){
-  //   count.push(dict[key].length)
-  // }
-  // console.log(count)
-
-  // Potentially add to limit upload types
-    //, accept:{'application'}
   const {getRootProps, getInputProps} = useDropzone({onDrop})
 
   return (
@@ -322,6 +198,7 @@ const Dropzone = () => {
   )
 }
 
+// Basis for Progress Bar (not fully implemented)
 const ProgressBar = ({ duration }) => {
   const [progress, setProgress] = useState(0);
 
@@ -355,15 +232,11 @@ const ProgressBar = ({ duration }) => {
 };
 
 function App() {
+  // Used to configure Pie Chart
   const [chartData, setChartData] = useState({
     series: [],
     labels: [],
     legend: {show:false},
-    // legend: { labels: { colors: 'black', 
-    //   fontsize: '10vh',
-    //   fontweight: "bold", 
-    //   // floating: true,
-    // } },
     dataLabels: {
       enabled: true, // Enable data labels
       style: {
@@ -374,7 +247,7 @@ function App() {
       },
       formatter: (val, { seriesIndex }) => {
           // Return the category name based on the series index
-          return `${chartData.labels[seriesIndex]}`/*${'\r\n'}${val.toFixed(2)}%`*/;
+          return `${chartData.labels[seriesIndex]}`;
       },
       // Configure data label placement and line
       dropShadow: {
@@ -391,7 +264,6 @@ function App() {
       },
       distributed: true,
       tooltipHoverFormatter: function(seriesName, opts) {
-        // return seriesName + ' - <strong>' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + '</strong>'
         return seriesName + 'TEST'
       },
     },
@@ -411,26 +283,17 @@ function App() {
     ],
   });
 
+  // Used to update Pie Chart
   const dosomething = () => {
     console.log(recordedFactors)
     console.log(dict)
     check = 1;
-    // console.log(count)
-
-    // const newCount = count;
-    // const newRecordedFactors = recordedFactors;
   
     var newCount = []
-    //console.log(recordedFactors.length)
     for (let i = 0; i<recordedFactors.length; i++){
-      // count.push(dict[recordedFactors[i]])
       newCount.push(dict[recordedFactors[i]])
     }
-    // console.log(count)
-    // PieChart()
-    // return(
-    //   <PieChart></PieChart>
-    // )
+
     setChartData({
       ...chartData,
       series: newCount,
@@ -445,7 +308,7 @@ function App() {
         },
         formatter: (val, { seriesIndex }) => {
             // Return the category name based on the series index
-            return `${recordedFactors[seriesIndex]}`/*${'\r\n'}${val.toFixed(2)}%`*/;
+            return `${recordedFactors[seriesIndex]}`;
         },
         // Configure data label placement and line
         dropShadow: {
@@ -462,41 +325,15 @@ function App() {
             dashArray: 3
         },
         distributed: true,
+        // The Goal here was to display percentages when hovering over the different categories (did not work)
         tooltipHoverFormatter: function(seriesName, opts) {
-          // return seriesName + ' - <strong>' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + '</strong>'
           return seriesName + 'TEST'
         }
-        // tooltip: {
-        //   enabled: true,
-        //   custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-        //       // Customize the tooltip content
-        //       const category = w.globals.labels[seriesIndex];
-        //       const value = series[seriesIndex];
-        //       const percentage = w.globals.seriesPercent[seriesIndex].toFixed(2);
-        //       return `<div style="padding: 10px; border-radius: 4px; background-color: #f2f2f2;">
-        //           <strong>${category}</strong><br />
-        //           Value: ${value}<br />
-        //           Percentage: ${percentage}%
-        //       </div>`;
-        //   },
-        // },
       },
     });
   }
 
-  // const HelpPage = () => {
-  //   return (
-  //     <Popup className='popup-text-help'
-  //     trigger={<button className="Help"></button>}
-  //     style={{margin: 10}}>
-  //       TESTING
-  //       TESTING
-  //       TESTING
-  //       TESTING
-  //     </Popup>
-  //   )
-  // }
-
+  // Shows percentages based on Pie Chart
   const PercentButton = () => {
     var totalNum = 0
     for (var i = 0; i < recordedFactors.length; i++) {
@@ -515,7 +352,6 @@ function App() {
       <div>
         <p className='popup-text'>Porcentagens:</p>
         <p className={"popup-text-percent"}>
-        {/* {result} */}
           <div dangerouslySetInnerHTML={{ __html: result }} />
         </p>
         <div>
@@ -524,10 +360,8 @@ function App() {
     )
   }
 
+  // Displays Pie Chart
   const PieChart = () => {
-    // if (!chartData || !chartData.type) {
-    //   return null; // Return null if chartData or chartData.type is undefined
-    // }
     if (check == 1) {
       return(
         <div>
@@ -535,7 +369,6 @@ function App() {
           trigger={<button className="Percent-Button">Distribuição Percentual</button>}>
             <PercentButton></PercentButton>
           </Popup>
-          {/* <button className="Percent-Button" onClick={percentButton}>Distribuição Percentual</button> */}
           <ReactApexChart options={chartData} series={chartData.series} type="donut" width="490"  />
         </div>
       )
@@ -544,9 +377,7 @@ function App() {
 
   return (
     <div className="App">
-      {/* <div className="wave"></div> */}
       <header className="App-header">
-        {/* <HelpPage></HelpPage> */}
         <PieChart></PieChart>
         <Dropzone></Dropzone>
         <Popup
@@ -554,7 +385,6 @@ function App() {
           position={['center', 'top center']}>
             <DefineFactors></DefineFactors>
         </Popup>
-        {/* <button onClick={testing}></button> */}
         <button className={"Test-Button"} onClick={dosomething}>Mostrar Gráfico</button>
       </header>
     </div>
