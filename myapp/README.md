@@ -1,70 +1,30 @@
-# Getting Started with Create React App
+# Instructions for using the Mission Field Organizer / 
+Instruções para usar o Organizador do Campo Missionário
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## English
+1) Define Factors - (Definir Fatores)
+This is where you are able to define the social factors with which you will organize each data file
 
-## Available Scripts
+2) Load your Data - (Carregar Dados Aqui)
+Drag your data folder with your text files unto the box (the data will be read and progress bar will appear)
 
-In the project directory, you can run:
+3a) Show Graph - (Mostrar Gráfico)
+Will display a pie chart showcasing the distribution of data (according to the given social factors)
+There will also be a button all the way at the top where you can see the percentages of the distributions
 
-### `npm start`
+3b) Download Zip - (Baixar Zip)
+Will download a zipped file with the data files organized into folders (according to the assigned social factors)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Portugese
+1) Definir Fatores
+É aqui que você pode definir os fatores sociais com os quais irá organizar cada arquivo de dados
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2) Carregar Dados Aqui
+Arraste sua pasta de dados com seus arquivos de texto até a caixa (os dados serão lidos e a barra de progresso aparecerá)
 
-### `npm test`
+3a) Mostrar Gráfico
+Exibirá um gráfico de pizza mostrando a distribuição dos dados (de acordo com os fatores sociais fornecidos)
+Haverá também um botão no topo onde você poderá ver as porcentagens das distribuições
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+3b) Baixar Zip
+Irá baixar um arquivo compactado com os arquivos de dados organizados em pastas (de acordo com os fatores sociais atribuídos)
