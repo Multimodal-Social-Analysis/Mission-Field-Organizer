@@ -1,5 +1,4 @@
-# Instructions for using the Mission Field Organizer / 
-Instruções para usar o Organizador do Campo Missionário
+# Instructions for using the Mission Field Organizer / Instruções para usar o Organizador do Campo Missionário
 
 ## English
 1) Define Factors - (Definir Fatores)
