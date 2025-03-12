@@ -1,7 +1,7 @@
 # Instructions for using the Mission Field Organizer / Instruções para usar o Organizador do Campo Missionário
 
 ## English
-(Before starting remeber to add OpenAI key to the code)
+(Before starting remember to add OpenAI key to the code)
 
 1) Define Factors - (Definir Fatores)
 This is where you are able to define the social factors with which you will organize each data file
